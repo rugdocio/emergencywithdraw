@@ -31,6 +31,7 @@ const usePools = () => {
             "amount": pool.amount, 
             "pid": start + i, 
             "want": pool.want,
+            "depositFee": pool.depFee,
             "mc": masterchefAddress})
         }
         start += interval

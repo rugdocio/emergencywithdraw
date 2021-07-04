@@ -47,6 +47,7 @@ function Pools() {
               pid={item.pid}
               chainId={chainId}
               want={item.want}
+              depositFee={item.depositFee}
               onEmergencyWithdraw={() => onEmergencyWithdraw(item)}
             ></Pool>
           )}
