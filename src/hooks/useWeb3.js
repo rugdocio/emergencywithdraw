@@ -28,9 +28,17 @@ const useWeb3 = () => {
   useEffect(() => {
     const connect = async () => {
       const provider_ = await web3Modal.connect();
+  
       setProvider(provider_);
       const web3 = new Web3(provider_);
       const chainId = await web3.eth.net.getId();
+
+      provider_.on("chainChanged", async (chainId_) => {
+        console.log("changed")
+        const networkId = await web3.eth.net.getId();
+        setWeb3Info({web3: web3, chainId: networkId});
+      });
+
       return { web3, chainId };
     };
     connect().then((info) => {
