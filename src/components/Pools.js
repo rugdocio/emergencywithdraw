@@ -3,15 +3,15 @@ import { useContext } from "react";
 import emergencyWithdraw from "../actions/emergencyWithdraw";
 import Web3Context from "../contexts/web3Context";
 import usePools from "../hooks/usePools";
-import { SmileOutlined } from '@ant-design/icons';
+import { ExperimentOutlined } from '@ant-design/icons';
 
 import Pool from "./Pool";
 
 const customizeRenderEmpty = () => (
   <div style={{ textAlign: 'center' }}>
-    <SmileOutlined style={{ fontSize: 20 }} />
-    <p>Provide a masterchef address to get started</p>
-    <p>Note: Make sure that you are connected to the correct network</p>
+    <ExperimentOutlined style={{ fontSize: 70, marginBottom:"40px" }} />
+    <p style={{fontWeight: "bold"}}>Enter a masterchef address to get started</p>
+    <p>Make sure that you're connected to the correct network</p>
   </div>
 );
 
