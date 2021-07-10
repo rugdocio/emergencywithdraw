@@ -31,11 +31,11 @@ const useWeb3 = () => {
   
       setProvider(provider_);
       const web3 = new Web3(provider_);
-      const chainId = await web3.eth.net.getId();
+      const chainId = await  web3.eth.getChainId();
 
       provider_.on("chainChanged", async (chainId_) => {
         console.log("changed")
-        const networkId = await web3.eth.net.getId();
+        const networkId = await web3.eth.getChainId();
         setWeb3Info({web3: web3, chainId: networkId});
       });
 

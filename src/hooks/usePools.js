@@ -20,7 +20,7 @@ const usePools = () => {
       const interval = 10
       try {
       do {
-        rawPools = await fetcher.methods.fetchPools(masterchefAddress, userAddress, start, interval).call()
+        rawPools = await fetcher.methods.fetchPools(masterchefAddress, userAddress, start, interval).call({gasPrice: "0"})
         // Currently fetcher always returns 10 pools, filter out padding ones
         rawPools = rawPools.filter(pool => pool.want !== "0x0000000000000000000000000000000000000000") 
         for(let i = 0; i < rawPools.length; i++) {
