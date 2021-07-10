@@ -11,12 +11,15 @@ struct Pool {
     uint16 depFee;
     uint256 amount;
     uint256 total;
+    bool isFallback;
+    uint8 decimals;
 }
 
 interface IERC20 {
     function name() external view returns (string calldata);
     function symbol() external view returns (string calldata);
     function balanceOf(address user) external view returns (uint256);
+    function decimals() external view returns (uint8);
 }
 
 interface Pair is IERC20 {
@@ -30,8 +33,25 @@ interface Masterchef {
     function poolLength() external view returns (uint256);
 }
 
+contract MCChecker {
+    // isStandardChef finds out if the poolInfo method is the standard one (panther uses a different one).
+    function isStandardChef(Masterchef mc) public view returns (bool) {
+        try mc.poolInfo(0) returns (address, uint256, uint256, uint256, uint16) {
+            return true;
+        } catch {
+            return false;
+        }
+    }
+    
+}
+
 
 contract Fetcher {
+    MCChecker public checker;
+    
+    constructor() {
+        checker = new MCChecker();
+    }
     function fetchPools(address _masterchef, address user, uint256 start, uint256 limit) public view returns (Pool[] memory) {
         Masterchef mc = Masterchef(_masterchef);
         
@@ -57,6 +77,10 @@ contract Fetcher {
             for (uint256 pid = start; pid < poolLength; pid++) {
                  pools[pid - start] = getPoolStandard(mc, pid, user);
             }
+        }else { // otherwise we fall back to a very generic low-level call implementation
+            for (uint256 pid = start; pid < poolLength; pid++) {
+                 pools[pid - start] = getPoolFallback(mc, pid, user);
+            }
         }
         
         return pools;
@@ -64,19 +88,48 @@ contract Fetcher {
     
     function getPoolStandard(Masterchef mc, uint256 pid, address user) public view returns (Pool memory) {
          (address want, uint256 allocPoint,,,uint16 depFee) = mc.poolInfo(pid);
-                 // fetch token name and symbol
-                (string memory name, string memory symbol) = getTokenDetails(want);
+        // fetch token name and symbol
+        (string memory name, string memory symbol, uint8 decimals) = getTokenDetails(want);
                 
-                (uint256 amount, ) = mc.userInfo(pid, user);
-                return Pool({
-                     symbol: symbol,
-                     name: name,
-                     want: want,
-                     allocPoint: allocPoint,
-                     depFee: depFee,
-                     amount: amount,
-                     total: getTotal(address(mc), want)
-                 });
+        (uint256 amount, ) = mc.userInfo(pid, user);
+        return Pool({
+            symbol: symbol,
+            name: name,
+            want: want,
+            allocPoint: allocPoint,
+            depFee: depFee,
+            amount: amount,
+            total: getTotal(address(mc), want),
+            isFallback: false,
+            decimals: decimals
+        });
+    }
+    
+    // Uses low-level calls and assume the first bytes returned are the pool address for poolInfo and the first bytes returned are the user amount for userInfo.
+    function getPoolFallback(Masterchef mc, uint256 pid, address user) public view returns (Pool memory) {
+        (bool success, bytes memory data) = address(mc).staticcall(abi.encodeWithSignature("poolInfo(uint256)", pid));
+        require(success, "!fallback poolInfo failed");
+        
+        address want = getAddressFromBytes(data);
+        (string memory name, string memory symbol, uint8 decimals) = getTokenDetails(want);
+        
+        uint256 amount = 0;
+        (bool userSuccess, bytes memory userData) = address(mc).staticcall(abi.encodeWithSignature("userInfo(uint256,address)", pid, user));
+        if (userSuccess) {
+            amount = getUint32FromBytes(userData);
+        }
+        
+        return Pool({
+            symbol: symbol,
+            name: name,
+            want: want,
+            allocPoint: 0,
+            depFee: 0,
+            amount: amount,
+            total: getTotal(address(mc), want),
+            isFallback: true,
+            decimals: decimals
+        });
     }
     
     function getTotal(address mc, address token) public view returns (uint256) {
@@ -87,9 +140,11 @@ contract Fetcher {
         }
     }
     
-    function getTokenDetails(address token) public view returns (string memory name, string memory symbol) {
-         name = "UNKNOWN";
-         symbol = "UNKNOWN";
+    function getTokenDetails(address token) public view returns (string memory name, string memory symbol, uint8 decimals) {
+         decimals = 18;
+         try IERC20(token).decimals() returns (uint8 dec){
+             decimals = dec;
+         }catch{}
          
          // Try to return the underlying token details in case it's an LP pair
          try Pair(token).token0() returns (address token0) {
@@ -99,12 +154,13 @@ contract Fetcher {
                  name = string(abi.encodePacked(symbol1, " / ", symbol2, " LP"));
                  symbol = string(abi.encodePacked(symbol1, " / ", symbol2));
                  
-                 return (name, symbol);
+                 return (name, symbol, decimals);
              } catch {}
         } catch {}
         
         // Just return the token details if it's not an LP pair.
-        return getTokenName(token);
+        (name, symbol) = getTokenName(token);
+        return (name, symbol, decimals);
     }
     
     function getTokenName(address token) public view returns (string memory name, string memory symbol) {
@@ -123,10 +179,38 @@ contract Fetcher {
     
     // isStandardChef finds out if the poolInfo method is the standard one (panther uses a different one).
     function isStandardChef(Masterchef mc) public view returns (bool) {
-        try mc.poolInfo(0) returns (address, uint256, uint256, uint256, uint16) {
-            return true;
+        try checker.isStandardChef(mc) returns (bool isStandard) { // we need an extra layer as abi.decode errors are not caught by try-catch
+            return isStandard;
         } catch {
             return false;
         }
+    }
+    
+        
+    // converts the return data to the first address found in it (pads 12 bytes because address only ocupies 20/32 bytes.)
+    function getAddressFromBytes(bytes memory _address) public pure returns (address) {
+        uint160 m = 0;
+        uint8 b = 0;
+
+        for (uint8 i = 12; i < 32; i++) {
+            m *= 256;
+            b = uint8(_address[i]);
+            m += b;
+        }
+        return address(m);
+    }
+    
+    // converts the return data to the first uint256 found in it
+    function getUint32FromBytes(bytes memory _uint256) public pure returns (uint256) {
+        uint256 m = 0;
+        uint8 b = 0;
+
+        for (uint8 i = 0; i < 32; i++) {
+            m *= 256;
+            b = uint8(_uint256[i]);
+            m += b;
+        }
+
+        return m;
     }
 }
