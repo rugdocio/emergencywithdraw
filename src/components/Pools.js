@@ -11,7 +11,9 @@ const customizeRenderEmpty = () => (
   <div style={{ textAlign: 'center' }}>
     <ExperimentOutlined style={{ fontSize: 70, marginBottom:"40px" }} />
     <p style={{fontWeight: "bold"}}>Enter a masterchef address to get started</p>
-    <p>Make sure that you're connected to the correct network</p>
+    <p>Make sure that you're connected to the correct network (Supported: BSC, Polygon and KCC)</p>
+    <p></p>
+    <p>This is an experimental service, use at your own risk and make sure to double check all contract interactions</p>
   </div>
 );
 
