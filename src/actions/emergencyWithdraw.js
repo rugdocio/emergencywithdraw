@@ -17,8 +17,16 @@ const emergencyWithdraw = (web3, chainId, masterchefAddress, pid) => {
             return receipt.status
         } catch (e) {
             console.error(e)
+            let errormsg = e.message
+            if (typeof errormsg === 'object' && errormsg !== null) {
+                if ('message' in errormsg) {
+                    errormsg = errormsg.message;
+                }
+            }
             notification.open({
-                message: 'Transaction failed'
+                message: 'Transaction failed',
+                description: errormsg
+
             })
         }
     }
