@@ -60,11 +60,116 @@
 						"internalType": "uint256",
 						"name": "total",
 						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isFallback",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint8",
+						"name": "decimals",
+						"type": "uint8"
 					}
 				],
 				"internalType": "struct Pool[]",
 				"name": "",
 				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "_address",
+				"type": "bytes"
+			}
+		],
+		"name": "getAddressFromBytes",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "contract Masterchef",
+				"name": "mc",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "pid",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			}
+		],
+		"name": "getPoolFallback",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "symbol",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "want",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "allocPoint",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint16",
+						"name": "depFee",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "total",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isFallback",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint8",
+						"name": "decimals",
+						"type": "uint8"
+					}
+				],
+				"internalType": "struct Pool",
+				"name": "",
+				"type": "tuple"
 			}
 		],
 		"stateMutability": "view",
@@ -126,6 +231,16 @@
 						"internalType": "uint256",
 						"name": "total",
 						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isFallback",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint8",
+						"name": "decimals",
+						"type": "uint8"
 					}
 				],
 				"internalType": "struct Pool",
@@ -155,6 +270,11 @@
 				"internalType": "string",
 				"name": "symbol",
 				"type": "string"
+			},
+			{
+				"internalType": "uint8",
+				"name": "decimals",
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",
@@ -206,6 +326,25 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "_uint256",
+				"type": "bytes"
+			}
+		],
+		"name": "getUint32FromBytes",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "pure",
 		"type": "function"
 	},
 	{

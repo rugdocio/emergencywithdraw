@@ -48,6 +48,8 @@ function Pools() {
               chainId={chainId}
               want={item.want}
               depositFee={item.depositFee}
+              decimals={item.decimals}
+              isFallback={item.isFallback}
               onEmergencyWithdraw={() => onEmergencyWithdraw(item)}
             ></Pool>
           )}

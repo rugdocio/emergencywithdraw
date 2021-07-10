@@ -1,10 +1,20 @@
 import { Avatar, List, Button } from "antd";
 import { getAddressLink } from "../config/constants/explorers";
+import { formatBigNumberToFixed } from "../utils/decimals";
 
 // The pool component is an entry in the pools list that represents a masterchef pool
 // When the emergencyWithdraw button is pressed, the injected "onEmergencyWithdraw" method is called.
 function Pool(props) {
-  const { name, symbol, amount, pid, chainId, want, depositFee, onEmergencyWithdraw } = props;
+  const { name, symbol, amount, pid, chainId, want, depositFee, decimals, isFallback, onEmergencyWithdraw } = props; // consider restructuring this
+  let decAmount = formatBigNumberToFixed(amount, decimals,decimals);
+  if (decAmount > 1){
+    decAmount = formatBigNumberToFixed(amount, 2,decimals);
+  } else if (decAmount > 0.1){
+    decAmount = formatBigNumberToFixed(amount, 3,decimals);
+  }else if (decAmount > 0.001){
+    decAmount = formatBigNumberToFixed(amount, 5,decimals);
+  }
+
   return (
     <List.Item>
       <List.Item.Meta
@@ -12,8 +22,8 @@ function Pool(props) {
           <Avatar src="https://cryptologos.cc/logos/binance-usd-busd-logo.svg?v=010" />
         }
         
-        title={<a target="_blank" rel="noreferrer" href={getAddressLink(chainId,want)}>{name} - pid: {pid} [ {(Number(depositFee)/100.0) + "%"} ]</a>}
-        description={amount + " " + symbol}
+        title={<a target="_blank" rel="noreferrer" href={getAddressLink(chainId,want)}>{name} - pid: {pid} [ {(isFallback ? "??.??" :formatBigNumberToFixed(depositFee, 2,2))+ "%"} ]</a>}
+        description={(amount === "0" ? "0" : decAmount) + " " + symbol}
       />
 
       <div>
