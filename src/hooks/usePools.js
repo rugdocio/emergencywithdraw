@@ -40,7 +40,6 @@ const usePools = () => {
         
       } while(rawPools.length >= interval && start <= 200) // Give up after 200 pools
     }catch(e){
-        console.error(e)
         notification.open({
           message: 'Unable to fetch masterchef',
           description: 'Are you sure the address is correct?'
