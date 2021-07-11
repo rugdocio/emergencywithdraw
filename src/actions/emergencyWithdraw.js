@@ -9,12 +9,12 @@ const emergencyWithdraw = (web3, chainId, masterchefAddress, pid) => {
                 from: web3.currentProvider.selectedAddress,
                 gasPrice: getDefaultGasPrice(web3, chainId)
             })
-            const receipt = await tx.wait()
+            console.log("executed " + tx)
 
             notification.open({
                 message: 'Transaction Succeeded'
             })
-            return receipt.status
+            return tx
         } catch (e) {
             console.error(e)
             let errormsg = e.data

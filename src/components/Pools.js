@@ -1,5 +1,5 @@
 import { List, Divider, ConfigProvider } from "antd";
-import { useContext } from "react";
+import { useContext, useReducer } from "react";
 import emergencyWithdraw from "../actions/emergencyWithdraw";
 import Web3Context from "../contexts/web3Context";
 import usePools from "../hooks/usePools";
@@ -19,6 +19,7 @@ const customizeRenderEmpty = () => (
 
 
 function Pools() {
+  const [, forceUpdate] = useReducer(x => x + 1, 0); // used to refresh ui
   const pools = usePools();
   const { web3, chainId } = useContext(Web3Context);
 
@@ -29,7 +30,10 @@ function Pools() {
       item.mc,
       item.pid
     );
-    doEmergencyWithdraw();
+    doEmergencyWithdraw().then(() => {
+        forceUpdate()
+    });
+
   };
   return (
     <>
