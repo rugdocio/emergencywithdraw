@@ -7,7 +7,7 @@ function MasterchefSearch(props) {
   const { onStart } = props;
   return (
     <Search
-      placeholder="Masterchef"
+      placeholder="Enter Masterchef Address"
       allowClear
       enterButton="Start"
       size="large"

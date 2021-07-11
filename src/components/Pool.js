@@ -4,6 +4,7 @@ import { formatBigNumberToFixed } from "../utils/decimals";
 
 // The pool component is an entry in the pools list that represents a masterchef pool
 // When the emergencyWithdraw button is pressed, the injected "onEmergencyWithdraw" method is called.
+//https://cryptologos.cc/logos/binance-usd-busd-logo.svg?v=010
 function Pool(props) {
   const { name, symbol, amount, pid, chainId, want, depositFee, decimals, isFallback, onEmergencyWithdraw } = props; // consider restructuring this
   let decAmount = formatBigNumberToFixed(amount, decimals,decimals);
@@ -19,10 +20,10 @@ function Pool(props) {
     <List.Item>
       <List.Item.Meta
         avatar={
-          <Avatar src="https://cryptologos.cc/logos/binance-usd-busd-logo.svg?v=010" />
+          <Avatar src="https://rugdoc.io/assets/placeholder.png" />
         }
-        
-        title={<a target="_blank" rel="noreferrer" href={getAddressLink(chainId,want)}>{name} - pid: {pid} [ {(isFallback ? "??.??" :formatBigNumberToFixed(depositFee, 2,2))+ "%"} ]</a>}
+
+        title={<a target="_blank" rel="noreferrer" href={getAddressLink(chainId,want)}>{name} - PID: {pid} [ {(isFallback ? "??.??" :formatBigNumberToFixed(depositFee, 2,2))+ "%"} ]</a>}
         description={(amount === "0" ? "0" : decAmount) + " " + symbol}
       />
 
