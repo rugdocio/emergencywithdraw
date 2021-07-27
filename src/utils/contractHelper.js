@@ -1,5 +1,6 @@
 import fetcherAbi from "../config/abi/fetcher.json";
 import masterchefAbi from "../config/abi/masterchef.json";
+import tokenAbi from "../config/abi/token.json";
 import { getFetcherAddress } from "./addressHelper";
 
 export const getDefaultGasPrice = (web3, chainId) => {
@@ -44,4 +45,14 @@ export const getMasterchefContract = (web3, chainId, masterchefAddress) => {
     return undefined;
   }
   return getContract(masterchefAbi, masterchefAddress, web3, chainId);
+};
+export const getTokenContract = (web3, chainId, tokenAddress) => {
+  if (
+    web3 === undefined ||
+    web3.eth === undefined ||
+    tokenAddress == null
+  ) {
+    return undefined;
+  }
+  return getContract(tokenAbi, tokenAddress, web3, chainId);
 };

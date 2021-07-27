@@ -6,6 +6,7 @@ import usePools from "../hooks/usePools";
 import { ExperimentOutlined } from '@ant-design/icons';
 
 import Pool from "./Pool";
+import revokeApproval from "../actions/revokeApproval";
 
 const customizeRenderEmpty = () => (
   <div style={{ textAlign: 'center' }}>
@@ -33,7 +34,19 @@ function Pools() {
     doEmergencyWithdraw().then(() => {
         forceUpdate()
     });
+  
+  };
 
+  const onRevoke = async (item) => {
+    const doRevoke = revokeApproval(
+      web3,
+      chainId,
+      item.want,
+      item.mc
+    );
+    doRevoke().then(() => {
+        forceUpdate()
+    });
   };
   return (
     <>
@@ -57,6 +70,7 @@ function Pools() {
               decimals={item.decimals}
               isFallback={item.isFallback}
               onEmergencyWithdraw={() => onEmergencyWithdraw(item)}
+              onRevoke={() => onRevoke(item)}
             ></Pool>
           )}
         />
