@@ -9,7 +9,7 @@ export const getDefaultGasPrice = (web3, chainId) => {
     56: toBN(5).mul(toBN(10).pow(toBN(9))),
     137: toBN(1).mul(toBN(10).pow(toBN(9))),
     321: toBN(1).mul(toBN(10).pow(toBN(9))),
-    43114: toBN(255).mul(toBN(10).pow(toBN(9))),
+    43114: toBN(225).mul(toBN(10).pow(toBN(9))),
   };
 
   return chainId in gasPrices ? gasPrices[chainId] : 0;
