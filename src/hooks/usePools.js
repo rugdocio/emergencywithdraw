@@ -5,7 +5,7 @@ import Web3Context from "../contexts/web3Context";
 import { useFetcher } from "./useContract";
 
 const usePools = () => {
-  const {web3, } = useContext(Web3Context)
+  const {web3, chainId} = useContext(Web3Context)
   const [pools, setPools] = useState()
   const {masterchefAddress, userAddress} = useContext(AddressContext);
   const fetcher = useFetcher();
@@ -17,10 +17,14 @@ const usePools = () => {
       let  result = []  
       let rawPools = []
       let start = 0
-      const interval = 10
+      const interval = 2
+      let config = {gasPrice: "0"}
+      if (chainId === 1285) {
+        config = {}
+      }
       try {
       do {
-        rawPools = await fetcher.methods.fetchPools(masterchefAddress, userAddress, start, interval).call({gasPrice: "0"})
+        rawPools = await fetcher.methods.fetchPools(masterchefAddress, userAddress, start, interval).call(config)
         // Currently fetcher always returns 10 pools, filter out padding ones
         rawPools = rawPools.filter(pool => pool.want !== "0x0000000000000000000000000000000000000000") 
         for(let i = 0; i < rawPools.length; i++) {
@@ -50,7 +54,7 @@ const usePools = () => {
     fetch().then(pools => {
       setPools(pools);
     })
-  }, [masterchefAddress, userAddress, fetcher, web3])
+  }, [masterchefAddress, userAddress, fetcher, web3, chainId])
 
   return pools
 }
