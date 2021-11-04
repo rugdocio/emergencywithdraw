@@ -12,7 +12,7 @@ const customizeRenderEmpty = () => (
   <div style={{ textAlign: 'center' }}>
     <ExperimentOutlined style={{ fontSize: 70, marginBottom:"40px" }} />
     <p style={{fontWeight: "bold", fontSize:35, color:"#7BD0DD"}}>Enter a masterchef address to get started</p>
-    <p>Make sure that you're connected to the correct network (Supported: BSC, Polygon, Avalanche, Fantom, IOTEX, Moonriver, Celo, Harmony ONE and KCC)</p>
+    <p>Make sure that you're connected to the correct network (Supported: BSC, Polygon, Avalanche, Fantom, IOTEX, Moonriver, Celo, Harmony ONE, KCC and okex)</p>
     <p></p>
     <p>This is an experimental service, use at your own risk and make sure to double check all contract interactions</p>
   </div>

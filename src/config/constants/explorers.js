@@ -10,6 +10,7 @@ export const explorers = {
       43114: "https://avascan.info/blockchain/c",
       42220: "https://explorer.celo.org",
       1666600000: "https://explorer.harmony.one",
+      66: "https://www.oklink.com/okexchain",
   };
 export const getAddressLink = (chainId, address) => {
     return explorers[chainId] + "/address/" + address
