@@ -1,13 +1,18 @@
 import { notification } from "antd"
-import { getDefaultGasPrice, getTokenContract } from "../utils/contractHelper"
+import { getDefaultGasPrice, getGasPrice, getTokenContract } from "../utils/contractHelper"
 
 const revokeApproval = (web3, chainId, tokenAddress, masterchefAddress) => {
     return async () => {
         try {
+           
+            let gasPrice = getDefaultGasPrice(web3, chainId);
+            try {
+                gasPrice = await getGasPrice(web3);
+            } catch {}
             const tokenContract = getTokenContract(web3, chainId, tokenAddress)
             const tx = await tokenContract.methods.approve(masterchefAddress, 0).send({
                 from: web3.currentProvider.selectedAddress,
-                gasPrice: getDefaultGasPrice(web3, chainId)
+                gasPrice: gasPrice
             })
             console.log("executed " + tx)
 

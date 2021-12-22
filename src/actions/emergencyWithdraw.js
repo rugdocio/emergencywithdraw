@@ -1,13 +1,17 @@
 import { notification } from "antd"
-import { getDefaultGasPrice, getMasterchefContract } from "../utils/contractHelper"
+import { getDefaultGasPrice, getGasPrice, getMasterchefContract } from "../utils/contractHelper"
 
 const emergencyWithdraw = (web3, chainId, masterchefAddress, pid) => {
     return async () => {
         try {
+            let gasPrice = getDefaultGasPrice(web3, chainId);
+            try {
+                gasPrice = await getGasPrice(web3);
+            } catch {}
             const masterchefContract = getMasterchefContract(web3, chainId, masterchefAddress)
             const tx = await masterchefContract.methods.emergencyWithdraw(pid).send({
                 from: web3.currentProvider.selectedAddress,
-                gasPrice: getDefaultGasPrice(web3, chainId)
+                gasPrice: gasPrice,
             })
             console.log("executed " + tx)
 
